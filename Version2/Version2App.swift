@@ -12,7 +12,7 @@ struct Version2App: App {
     @State private var vm = FlorViewModel()
     var body: some Scene {
         WindowGroup {
-            ContentView().environment(self.vm)
+            DetailView().environment(self.vm)
         }
     }
 }
