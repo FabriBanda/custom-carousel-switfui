@@ -1,8 +1,12 @@
 import SwiftUI
 
 struct CarruselView: View {
-    @State private var currentIndex = 0
     
+    @Binding var currentIndex:Int
+    
+    @Binding var isImagesShow:Bool
+    
+    @Binding var showCloseButton:Bool
     
     private enum AxisLock {
         case none, horizontal , down
@@ -14,10 +18,12 @@ struct CarruselView: View {
     @GestureState private var dragX: CGFloat = 0
     @GestureState private var dragY: CGFloat = 0
 
-    @State private var showCloseButton = true
+    
     @State private var opacity: Double = 1
 
     @Environment(FlorViewModel.self) var vm
+    
+
 
 
     var body: some View {
@@ -46,10 +52,10 @@ struct CarruselView: View {
          
             }
             .offset(y: axis == .down ? dragY : 0)
-            .background(Color.white.opacity(max(0.30, opacity)))
+            .background(Color(.systemBackground).opacity(max(0.30, opacity)))
             .overlay(alignment: .topTrailing) {
                 
-                if axis != .down && self.showCloseButton{
+                if axis != .down && showCloseButton{
                     closeButton
                 }
          
@@ -79,7 +85,7 @@ struct CarruselView: View {
 
     private var closeButton: some View {
         Button {
-            vm.isCarruselVisible = false
+            isImagesShow = false
         } label: {
             Image(systemName: "xmark")
                 .foregroundStyle(Color.primary)
@@ -119,7 +125,7 @@ struct CarruselView: View {
             .updating($dragY) { value, state, _ in
                 guard axis == .down else { return }
                 state = value.translation.height
-                print(value.translation.height)
+              
             }
             .onEnded { value in
                 defer {
@@ -162,7 +168,7 @@ struct CarruselView: View {
 
                     if shouldDismiss {
                         self.showCloseButton = false
-                        vm.isCarruselVisible = false
+                        isImagesShow = false
                     } else {
                       
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
@@ -192,6 +198,4 @@ struct CarruselView: View {
     }
 }
 
-#Preview {
-    CarruselView().environment(FlorViewModel())
-}
+

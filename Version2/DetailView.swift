@@ -9,54 +9,68 @@ import SwiftUI
 
 struct DetailView: View {
    
+    @Environment(FlorViewModel.self) var vm
     
-    @Environment(FlorViewModel.self) var vm 
+    @State private var isImagesVisible: Bool = false
+    
+    @State private var currentIndex: Int = 0
+    @State private var showCloseButton = true
     
     var body: some View {
         ZStack {
             VStack(alignment: .leading){
                 
-                TabView {
-                    ForEach(vm.images, id: \.self) { image in
-                        Image(image)
-                            .resizable()
-                            .scaledToFill()
-                            .clipped()
-                            .onTapGesture {
-                                vm.isCarruselVisible = true
-                            }
+                CarruselDetailView(currentIndex: self.$currentIndex)
+                    .onTapGesture {
+                        
+                        self.showCloseButton = true
+                        self.isImagesVisible = true
                         
                     }
-                }
-                .tabViewStyle(.page)
-                .frame(height: 300)
                 
-                VStack(alignment: .leading,spacing: 10){
-                    
-                    Text("50 Red Roses")
-                        .font(.title3)
-                    
-                    Text("$1,569")
-                        .font(.headline)
-                        .bold()
-                    
-                }.padding()
-                
-                Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.")
+                Text("Arreglo de 24 Rosas Rojas")
                     .multilineTextAlignment(.leading)
-                    .font(.body)
+                    .font(.title2)
+                    .padding()
+                    .bold()
                 
+                
+                VStack{
+                    Text("Un arreglo fresco y elegante, diseñado para transmitir emociones en cualquier ocasión especial. Flores seleccionadas cuidadosamente y presentadas en un jarrón de vidrio que realza su belleza natural.")
+                        .multilineTextAlignment(.leading)
+                    
+                }.padding(.horizontal)
+         
                 
                 Spacer()
+                
+                HStack{
+                    
+                    Spacer()
+                    
+                    Button {
+                        
+                    } label: {
+                        Text("Añadir al carrito")
+                            .foregroundStyle(Color(.systemBackground))
+                            .bold()
+                    }
+                    
+                    Spacer()
+                }
+                .padding()
+                .background(Color.purple,in:RoundedRectangle(cornerRadius: 20))
+                .padding()
+
             }
             
-            if vm.isCarruselVisible {
-                CarruselView()
-                    .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
+            if self.isImagesVisible {
+                CarruselView(currentIndex: self.$currentIndex,isImagesShow: self.$isImagesVisible,showCloseButton: self.$showCloseButton)
+                    .transition(.asymmetric(insertion: .move(edge: .bottom), removal:.move(edge: .bottom).combined(with: .opacity)))
                     
             }
         
-        }.animation(.easeInOut,value: vm.isCarruselVisible)
+        }.animation(.easeInOut,value: self.isImagesVisible)
     }
 }
 

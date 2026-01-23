@@ -10,6 +10,5 @@ import Combine
 
 @Observable
 final class FlorViewModel {
-    var isCarruselVisible:Bool = false
     let images = ["Flor1","Flor2","Flor3"]
 }
