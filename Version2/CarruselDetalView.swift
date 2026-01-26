@@ -12,6 +12,13 @@ struct CarruselDetailView: View {
     @GestureState private var dragOffset:CGFloat = 0
     @Environment(FlorViewModel.self) var vm
     
+    private func baseXOffset(outerView:CGFloat,cardWidth:CGFloat)-> CGFloat {
+        return outerView/2
+    - cardWidth / 2
+    - (CGFloat(self.currentIndex) * cardWidth)
+    + self.dragOffset
+    }
+    
     var body: some View {
         GeometryReader { outerView in
             
@@ -27,11 +34,8 @@ struct CarruselDetailView: View {
                     }
                 }.frame(width: outerView.size.width,alignment: .leading)
                     .offset(
-                        x:
-                            outerView.size.width/2
-                        - cardWidth / 2
-                        - (CGFloat(self.currentIndex) * cardWidth)
-                        + self.dragOffset
+                        x:baseXOffset(outerView: outerView.size.width, cardWidth: cardWidth)
+                        
                     )
                     .gesture(
                         DragGesture()
@@ -42,20 +46,20 @@ struct CarruselDetailView: View {
                                 
                                 let width = cardWidth
                                 
-                                let t = value.translation.width
-                                let p = value.predictedEndTranslation.width
+                                let traslationX = value.translation.width
+                                let predictedTraslationX = value.predictedEndTranslation.width
                                 
                                 
                                 let distanceThreshold = width * 0.55
                                 let flickThreshold    = width * 0.40
                                 
                                 
-                                let shouldMove = abs(t) > distanceThreshold || abs(p) > flickThreshold
+                                let shouldMove = abs(traslationX) > distanceThreshold || abs(predictedTraslationX) > flickThreshold
                                 
                                 guard shouldMove else { return }
                                 
                              
-                                let direction: Int = (p != 0 ? p : t) < 0 ? 1 : -1
+                                let direction: Int = (predictedTraslationX != 0 ? predictedTraslationX : traslationX) < 0 ? 1 : -1
                                 
                                 let newIndex = min(max(currentIndex + direction, 0), self.vm.images.count - 1)
                                 
